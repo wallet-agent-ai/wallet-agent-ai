@@ -202,7 +202,7 @@ You will receive:
 The PVOB go to your account , the AWB to the notarized account of the agent. The AWB cant be moved. Only burn. 
 - `POLICY_VAULT_OWNER_BADGE` — PVOB the owner badge resource address, go to the owner wallet.
 - `NOTARIZER_ACCOUNT` — The notarized account created on SDK.
-Save all. You will need them in the next step.
+Save all. You will need them in the next step creating the .env.agent file just need to copy there.
 
 ### Step 2 — Fund the PolicyVault
 
@@ -213,7 +213,7 @@ The agent can only spend what you autorized. No more.
 ### Step 3 — Create your .env.agent file
 
 Create a `.env.agent` file in your agent project
-on the package come a example with the required
+on the package come a example with the required, the 4 required values are created on the init , just copy.
 
 ```bash
 NETWORK=mainnet 
@@ -250,70 +250,6 @@ AGGR_ENDPOINT=https://api.astrolescent.com
 AGGR_PARTNER_ID=XXXX
 AGGR_TIMEOUT_MS=30000
 
-```
-
----
-
-## Agent Integration (3 lines of code)
-
-```typescript
-import { AgentWallet, createAgentWalletTools } from "agentwallet-radix";
-
-const wallet = new AgentWallet({
-  componentAddress: process.env.POLICY_VAULT_ADDRESS!,
-  badgeResourceAddress: process.env.AGENT_BADGE_ADDRESS!,
-  privateKey: process.env.AGENT_PRIVATE_KEY!,
-  network: "mainnet", // or "stokenet" for testing
-
-  // Optional — remove if you don't need trading
-  aggrConfig: {
-    endpoint: process.env.AGGR_ENDPOINT!,
-    partnerId: process.env.AGGR_PARTNER_ID!,
-  },
-});
-
-const tools = createAgentWalletTools(wallet);
-
-// Pass tools to your agent — it will use them autonomously
-```
-
-### LangChain
-
-```typescript
-import { AgentExecutor } from "langchain/agents";
-
-const agent = new AgentExecutor({ llm, tools });
-await agent.invoke({
-  input: "Pay 50 XRD to account_rdx1... for API invoice #42"
-});
-```
-
-### OpenAI function calling
-
-```typescript
-import OpenAI from "openai";
-
-const openai = new OpenAI();
-
-const response = await openai.chat.completions.create({
-  model: "gpt-4",
-  messages: [{ role: "user", content: "Check my vault balance" }],
-  tools: tools.map(t => ({
-    type: "function",
-    function: {
-      name: t.name,
-      description: t.description,
-      parameters: t.parameters,
-    }
-  })),
-});
-```
-
-### AutoGen / CrewAI
-
-```typescript
-// Any framework that supports function calling works the same way
-// Pass the tools array to your agent executor
 ```
 
 ---
